@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CareSlot — Analytics Dashboard</title>
+  <style>
+    :root { --bg:#0f172a; --card:#1e293b; --accent:#6366f1; --text:#e2e8f0; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
+    header { padding:24px 32px; background:var(--accent); color:#fff; }
+    header h1 { margin:0; font-size:22px; }
+    main { padding:32px; display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+    .card { background:var(--card); border-radius:12px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,.3); }
+    .card h2 { margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; }
+    .stat { font-size:34px; font-weight:700; }
+    table { width:100%; border-collapse:collapse; margin-top:8px; }
+    th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #334155; }
+  </style>
+</head>
+<body>
+  <header><h1>🏥 CareSlot — Analytics Dashboard</h1></header>
+  <main>
+    <section class="card">
+      <h2>Total appointments</h2>
+      <div class="stat" id="total">—</div>
+    </section>
+    <section class="card">
+      <h2>Appointments per doctor</h2>
+      <table id="per-doctor"><thead><tr><th>Doctor</th><th>Count</th></tr></thead><tbody></tbody></table>
+    </section>
+  </main>
+  <script>
+    fetch('/api/analytics').then(r => r.json()).then(rows => {
+      const body = document.querySelector('#per-doctor tbody');
+      let total = 0;
+      rows.forEach(r => {
+        total += r.count;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.doctor__name ?? '—'}</td><td>${r.count}</td>`;
+        body.appendChild(tr);
+      });
+      document.querySelector('#total').textContent = total;
+    });
+  </script>
+</body>
+</html>
